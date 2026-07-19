@@ -12,7 +12,7 @@ export class AIService {
 
     try {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
       const prompt = `You are SAKHI AI, a helpful, empathetic, and knowledgeable assistant for a Women & Child Welfare Platform. 
       You provide guidance on menstrual tracking, maternal care, government schemes, and general women's health. 
