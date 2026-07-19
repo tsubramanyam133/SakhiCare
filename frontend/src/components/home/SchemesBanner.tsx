@@ -39,7 +39,7 @@ export function SchemesBanner() {
             >
               <div className="h-32 w-full relative bg-muted">
                 {scheme.imageUrl ? (
-                  <img src={scheme.imageUrl} alt={scheme.title || 'Scheme'} className="w-full h-full object-cover" />
+                  <img src={scheme.imageUrl} alt={scheme.title || 'Scheme'} className="w-full h-full object-contain bg-white p-1" />
                 ) : (
                   <div className="w-full h-full bg-orange-100 flex items-center justify-center text-orange-400">
                     No Image

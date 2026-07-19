@@ -45,7 +45,7 @@ export default function SchemesPage() {
           <Card key={scheme.id} className="flex flex-col h-full shadow-sm hover:shadow-md transition-all hover:border-blue-300 overflow-hidden">
             {scheme.imageUrl ? (
               <div className="h-40 w-full relative bg-muted">
-                <img src={scheme.imageUrl} alt={scheme.title} className="w-full h-full object-cover" />
+                <img src={scheme.imageUrl} alt={scheme.title} className="w-full h-full object-contain bg-white p-2" />
                 <Badge variant="secondary" className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border-blue-200 text-blue-800 shadow-sm">
                   {scheme.category}
                 </Badge>
