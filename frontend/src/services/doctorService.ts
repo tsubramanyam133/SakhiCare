@@ -15,48 +15,13 @@ export interface DoctorDTO {
 
 export const DoctorService = {
   getAllDoctors: async () => {
-    // Hardcoded doctors list to ensure they load on Vercel without API dependency
-    return [
-      {
-        "_id": "6a5b80e650949e928f1cbaea",
-        "name": "Dr. Ananya Sharma",
-        "specialty": "Gynecologist & Obstetrician",
-        "experience": "15 years exp",
-        "rating": 4.9,
-        "reviews": 124,
-        "location": "Apollo Clinic, Andheri",
-        "distance": "2.5 km away",
-        "consultationFee": "₹800",
-        "languages": ["English", "Hindi", "Marathi"],
-        "isOnline": true
-      },
-      {
-        "_id": "6a5b80e650949e928f1cbaec",
-        "name": "Dr. Meera Reddy",
-        "specialty": "Psychiatrist (Women's Mental Health)",
-        "experience": "8 years exp",
-        "rating": 4.7,
-        "reviews": 56,
-        "location": "Mind Wellness Center",
-        "distance": "5.0 km away",
-        "consultationFee": "₹1000",
-        "languages": ["English", "Hindi", "Telugu"],
-        "isOnline": true
-      },
-      {
-        "_id": "6a5b80e650949e928f1cbaeb",
-        "name": "Dr. Ritu Desai",
-        "specialty": "Pediatrician",
-        "experience": "10 years exp",
-        "rating": 4.8,
-        "reviews": 89,
-        "location": "Sunshine Children's Hospital",
-        "distance": "3.1 km away",
-        "consultationFee": "₹600",
-        "languages": ["English", "Gujarati"],
-        "isOnline": false
-      }
-    ];
+    try {
+      const response = await apiClient.get('/doctors');
+      return response.data;
+    } catch (e) {
+      console.error("Failed to fetch doctors:", e);
+      return [];
+    }
   },
 
   createDoctor: async (doctor: DoctorDTO) => {
