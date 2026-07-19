@@ -1,30 +1,38 @@
 import { AppError } from '../utils/AppError';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export class AIService {
-  /**
-   * Mocked AI response generator
-   */
   static async generateChatResponse(userId: string, message: string) {
-    // In a real implementation, we would fetch User Profile for context
-    // and call OpenAI API via SSE stream here.
-
-    const keywords = message.toLowerCase();
-    let response = "I am SAKHI AI. How can I help you today?";
-
-    if (keywords.includes('period') || keywords.includes('cramp')) {
-      response = "It sounds like you might be experiencing menstrual cramps. Drinking warm water, applying a heating pad, and gentle stretching can help. If the pain is severe, please consult a doctor.";
-    } else if (keywords.includes('pregnant') || keywords.includes('baby')) {
-      response = "Maternal wellness is crucial. Ensure you are taking your prescribed prenatal vitamins and attending regular checkups. Do you have any specific concerns today?";
-    } else if (keywords.includes('diet') || keywords.includes('food')) {
-      response = "A balanced diet rich in iron (like spinach and lentils) and vitamin C is highly recommended for women's health. Would you like a personalized weekly nutrition plan?";
+    if (!process.env.GEMINI_API_KEY) {
+      return {
+        role: 'assistant',
+        content: "I'm sorry, my AI connection is not configured yet. Please provide the Gemini API key in the backend environment variables."
+      };
     }
 
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    return {
-      role: 'assistant',
-      content: response
-    };
+      const prompt = `You are SAKHI AI, a helpful, empathetic, and knowledgeable assistant for a Women & Child Welfare Platform. 
+      You provide guidance on menstrual tracking, maternal care, government schemes, and general women's health. 
+      Keep answers concise and easy to understand.
+      User message: ${message}`;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      return {
+        role: 'assistant',
+        content: text
+      };
+    } catch (e: any) {
+      console.error("Gemini Error:", e);
+      return {
+        role: 'assistant',
+        content: "I'm sorry, I encountered an error while processing your request with the AI model."
+      };
+    }
   }
 }

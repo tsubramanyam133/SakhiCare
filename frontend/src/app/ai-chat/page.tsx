@@ -183,7 +183,7 @@ export default function AIChatPage() {
       // Call the real backend AI endpoint
       const { apiClient } = await import('@/services/apiClient');
       const res = await apiClient.post('/ai/chat', { message: input });
-      let aiContent = res.data?.data || res.data?.message || "I'm sorry, I couldn't process that.";
+      let aiContent = res.data?.data?.content || res.data?.message || "I'm sorry, I couldn't process that.";
 
       setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: aiContent }]);
     } catch (e) {
