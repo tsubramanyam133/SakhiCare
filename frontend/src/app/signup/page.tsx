@@ -1,5 +1,7 @@
 'use client';
 
+import { apiClient } from '@/services/apiClient';
+
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,28 +32,11 @@ export default function SignupPage() {
     setIsLoading(true);
     
     try {
-      let isDbSuccess = false;
-      try {
-        const response = await fetch('http://localhost:5000/api/v1/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        if (response.ok) {
-          isDbSuccess = true;
-        } else {
-          throw new Error(data.message || 'Failed to create account in database');
-        }
-      } catch (networkError) {
-        console.warn("Backend unreachable (likely mobile testing). Using Demo Mode.", networkError);
-      }
-
-      // If backend is active or we are simulating, go to OTP step
+      const response = await apiClient.post('/auth/register', { email, password });
+      // If backend is active and sends OTP, go to OTP step
       setStep('OTP');
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || 'Failed to create account');
     } finally {
       setIsLoading(false);
     }
@@ -63,28 +48,14 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      let isDbSuccess = false;
-      try {
-        const response = await fetch('http://localhost:5000/api/v1/auth/verify-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, otp })
-        });
-        
-        const data = await response.json();
-        if (response.ok) {
-          isDbSuccess = true;
-          if (data.accessToken) {
-             localStorage.setItem('admin_token', data.accessToken);
-          }
-        } else {
-          throw new Error(data.message || 'Invalid OTP');
-        }
-      } catch (networkError) {
-        console.warn("Backend unreachable (likely mobile testing). Using Demo Mode.", networkError);
+      const response = await apiClient.post('/auth/verify-otp', { email, otp });
+      const data = response.data;
+      
+      if (data.accessToken) {
+         localStorage.setItem('admin_token', data.accessToken);
       }
 
-      // Save user to state & UI (Mock DB success for mobile demo)
+      // Save user to state & UI
       const newUser = { name: name || 'User', email, role };
       localStorage.setItem('sakhi_user', JSON.stringify(newUser));
       setUser(newUser);
@@ -92,7 +63,7 @@ export default function SignupPage() {
       // Redirect to Homepage
       router.push('/');
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || 'Invalid OTP');
     } finally {
       setIsLoading(false);
     }
