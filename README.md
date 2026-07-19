@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/public/logo.jpg" alt="SAKHI Logo" width="120" />
+  <img src="https://chatgpt.com/backend-api/estuary/content?id=file_00000000a6d481fbaa8a728a1f7ab2c4&ts=495685&p=fs&cid=1&sig=c81fe9b6cb1a8ead43cd2fa609dcab5521f42bc6d2e7607379434fa8877786d2&v=0" alt="SAKHI Logo" width="120" />
   <h1>SAKHI | Women & Child Welfare Platform</h1>
   <p>Empowering Women Through Accessible Healthcare, AI, and Community</p>
 </div>
