@@ -16,7 +16,7 @@ const app = express();
 // Security and utility middlewares
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: true, // Allows all origins (including Vercel) dynamically while keeping credentials:true working
   credentials: true,
 }));
 app.use(express.json());
