@@ -180,77 +180,10 @@ export default function AIChatPage() {
     setIsLoading(true);
 
     try {
-      // Mocking AI response for Hackathon Demo without needing backend
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      const responses = [
-        "That's a great question! Based on common health guidelines, you should stay hydrated and get plenty of rest.",
-        "It's completely normal to experience that. Listen to your body and take it easy.",
-        "Please consult a certified gynecologist if the pain persists for more than 48 hours.",
-        "Yes, tracking your cycle can help predict these mood changes. Anything else I can help with?"
-      ];
-
-      let aiContent = responses[Math.floor(Math.random() * responses.length)];
-      const lowerInput = input.toLowerCase();
-
-      if (lowerInput.includes('joke') || lowerInput.includes('joake')) {
-        if (lowerInput.includes('telugu') || lowerInput.includes('telgu')) {
-          const teluguJokes = [
-            "టీచర్: నేను అడిగిన ప్రశ్నకు సమాధానం ఇస్తే వంద రూపాయలు ఇస్తాను. రాము: అడగండి మాస్టారు. టీచర్: భూమి గుండ్రంగా ఎందుకుంది? రాము: బల్ల మీద పెడితే కిందపడిపోతుందని! 😄 (Here is a Telugu joke for you!)",
-            "భార్య: ఏవండీ, మీ షర్ట్ కి చిల్లు పడింది, కుట్టమంటారా? భర్త: వద్దులే, అది లేటెస్ట్ ఫ్యాషన్. భార్య: మరి మీ జేబులో ఉన్న పది వేలు ఎలా పోయాయి? భర్త: ఆ చిల్లులో నుంచే! 🤣 (Here is a Telugu joke for you!)"
-          ];
-          aiContent = teluguJokes[Math.floor(Math.random() * teluguJokes.length)];
-        } else if (lowerInput.includes('hindi')) {
-          const hindiJokes = [
-            "टीचर: एक तरफ पैसा, दूसरी तरफ अक्कल, क्या चुनोगे? छात्र: पैसा. टीचर: गलत, मैं अक्कल चुनती. छात्र: आप सही कह रही हैं, जिसके पास जिस चीज़ की कमी होती है वो वही चुनता है! 😄 (Here is a Hindi joke for you!)",
-            "संता: डॉक्टर साहब, मेरे कान में फोन की घंटी बजती है! डॉक्टर: तो कान में उठा लिया करो! 🤣 (Here is a Hindi joke for you!)"
-          ];
-          aiContent = hindiJokes[Math.floor(Math.random() * hindiJokes.length)];
-        } else if (lowerInput.includes('tamil')) {
-          aiContent = "ஆசிரியை: உனக்கு தெரிந்த இரண்டு விலங்குகளின் பெயர்களைச் சொல். மாணவன்: ஒரு நாய், இன்னொரு நாய்! 🤣 (Here is a Tamil joke for you!)";
-        } else if (lowerInput.includes('kannada')) {
-          aiContent = "ಶಿಕ್ಷಕ: ನಿನಗೆ ಗೊತ್ತಿರುವ ಎರಡು ಪ್ರಾಣಿಗಳ ಹೆಸರು ಹೇಳು. ವಿದ್ಯಾರ್ಥಿ: ಒಂದು ನಾಯಿ, ಇನ್ನೊಂದು ನಾಯಿ! 😄 (Here is a Kannada joke for you!)";
-        } else if (lowerInput.includes('malayalam')) {
-          aiContent = "ടീച്ചർ: നിനക്കറിയാവുന്ന രണ്ട് മൃഗങ്ങളുടെ പേര് പറയുക. കുട്ടി: ഒരു പട്ടി, മറ്റൊരു പട്ടി! 😅 (Here is a Malayalam joke for you!)";
-        } else if (lowerInput.includes('marathi')) {
-          aiContent = "शिक्षक: तुला माहित असलेल्या दोन प्राण्यांची नावे सांग. विद्यार्थी: एक कुत्रा, दुसरा कुत्रा! 😄 (Here is a Marathi joke for you!)";
-        } else if (lowerInput.includes('bengali')) {
-          aiContent = "শিক্ষক: তোমার জানা দুটি প্রাণীর নাম বলো। ছাত্র: একটা কুকুর, আরেকটা কুকুর! 🤣 (Here is a Bengali joke for you!)";
-        } else if (lowerInput.includes('gujarati')) {
-          aiContent = "શિક્ષક: તમને ખબર હોય તેવા બે પ્રાણીઓના નામ આપો. વિદ્યાર્થી: એક કૂતરો, બીજો કૂતરો! 😅 (Here is a Gujarati joke for you!)";
-        } else if (lowerInput.includes('punjabi')) {
-          aiContent = "ਅਧਿਆਪਕ: ਦੋ ਜਾਨਵਰਾਂ ਦੇ ਨਾਮ ਦੱਸੋ ਜੋ ਤੁਸੀਂ ਜਾਣਦੇ ਹੋ। ਵਿਦਿਆਰਥੀ: ਇੱਕ ਕੁੱਤਾ, ਦੂਜਾ ਕੁੱਤਾ! 😄 (Here is a Punjabi joke for you!)";
-        } else if (lowerInput.includes('urdu')) {
-          aiContent = "استاد: دو جانوروں کے نام بتائیں جنہیں آپ جانتے ہیں۔ طالب علم: ایک کتا، دوسرا کتا! 🤣 (Here is an Urdu joke for you!)";
-        } else {
-          const englishJokes = [
-            "Why did the developer cross the road? To fix the bugs on the other side! 😄",
-            "Why do programmers prefer dark mode? Because light attracts bugs! 🤣",
-            "How many programmers does it take to change a light bulb? None, that's a hardware problem! 😅"
-          ];
-          aiContent = englishJokes[Math.floor(Math.random() * englishJokes.length)];
-        }
-      } else if (lowerInput.includes('hindi')) {
-        aiContent = "नमस्ते! मैं सखी एआई हूँ। मैं आपकी कैसे मदद कर सकती हूँ?";
-      } else if (lowerInput.includes('telugu') || lowerInput.includes('telgu')) {
-        aiContent = "నమస్కారం! నేను సఖి AI ని. నేను మీకు ఎలా సహాయపడగలను?";
-      } else if (lowerInput.includes('tamil')) {
-        aiContent = "வணக்கம்! நான் சகி AI. நான் உங்களுக்கு எப்படி உதவ முடியும்?";
-      } else if (lowerInput.includes('kannada')) {
-        aiContent = "ನಮಸ್ಕಾರ! ನಾನು ಸಖಿ AI. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?";
-      } else if (lowerInput.includes('malayalam')) {
-        aiContent = "നമസ്കാരം! ഞാൻ സഖി AI ആണ്. എനിക്ക് നിങ്ങളെ എങ്ങനെ സഹായിക്കാനാകും?";
-      } else if (lowerInput.includes('marathi')) {
-        aiContent = "नमस्कार! मी सखी एआय आहे. मी तुम्हाला कशी मदत करू शकेन?";
-      } else if (lowerInput.includes('bengali')) {
-        aiContent = "নমস্কার! আমি সখী এআই। আমি আপনাকে কীভাবে সাহায্য করতে পারি?";
-      } else if (lowerInput.includes('gujarati')) {
-        aiContent = "નમસ્તે! હું સખી AI છું. હું તમને કેવી રીતે મદદ કરી શકું?";
-      } else if (lowerInput.includes('punjabi')) {
-        aiContent = "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ਸਖੀ AI ਹਾਂ। ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?";
-      } else if (lowerInput.includes('urdu')) {
-        aiContent = "ہیلو! میں سخی اے آئی ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟";
-      }
+      // Call the real backend AI endpoint
+      const { apiClient } = await import('@/services/apiClient');
+      const res = await apiClient.post('/ai/chat', { message: input });
+      let aiContent = res.data?.data || res.data?.message || "I'm sorry, I couldn't process that.";
 
       setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: aiContent }]);
     } catch (e) {
