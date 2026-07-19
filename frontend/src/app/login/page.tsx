@@ -31,7 +31,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-[calc(100dvh-5rem)] flex flex-col justify-center items-center p-4 sm:p-8 overflow-y-auto overflow-x-hidden bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100/50">
+    <div className="relative min-h-[calc(100dvh-5rem)] grid place-items-center py-10 px-4 sm:px-8 overflow-y-auto overflow-x-hidden bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100/50">
       {/* Decorative background elements */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-pink-300/20 rounded-full blur-3xl animate-[pulse_10s_ease-in-out_infinite]"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-rose-300/20 rounded-full blur-3xl animate-[pulse_8s_ease-in-out_infinite_700ms]"></div>
