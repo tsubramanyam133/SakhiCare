@@ -31,7 +31,7 @@ export class AIService {
       console.error("Gemini Error:", e);
       return {
         role: 'assistant',
-        content: "I'm sorry, I encountered an error while processing your request with the AI model."
+        content: `Error from Gemini AI: ${e.message || "Unknown error"}. Please check your API key.`
       };
     }
   }
