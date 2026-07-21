@@ -5,11 +5,16 @@ import dns from 'dns';
 dns.setDefaultResultOrder('ipv4first');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
   auth: {
     user: 'sakhicare0203@gmail.com', // Hardcoded
     pass: 'doey itba amhf ixqu',     // Hardcoded
   },
+  connectionTimeout: 10000, // 10 seconds timeout
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 export class EmailService {
