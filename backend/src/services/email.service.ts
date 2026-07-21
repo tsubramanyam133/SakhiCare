@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   secure: false, // Use STARTTLS on port 587
   auth: {
     user: process.env.EMAIL_USER || 'sakhicare0203@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || '', 
+    pass: 'doey itba amhf ixqu', // Hardcoded to bypass Render Env issues
   },
 });
 
