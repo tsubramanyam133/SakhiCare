@@ -17,6 +17,7 @@ export interface IUser extends Document {
   isEmailVerified: boolean;
   status: 'active' | 'suspended' | 'banned';
   refreshTokens: string[];
+  phoneNumber?: string;
   otp?: string;
   otpExpiresAt?: Date;
   createdAt: Date;
@@ -55,6 +56,9 @@ const userSchema = new Schema<IUser>(
     refreshTokens: {
       type: [String],
       default: [],
+    },
+    phoneNumber: {
+      type: String,
     },
     otp: {
       type: String,

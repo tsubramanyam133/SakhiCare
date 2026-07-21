@@ -5,8 +5,8 @@ import { AuthRequest } from '../../middlewares/authGuard';
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body;
-      const user = await AuthService.register(email, password);
+      const { email, password, phoneNumber } = req.body;
+      const user = await AuthService.register(email, password, phoneNumber);
       res.status(201).json({ success: true, data: user });
     } catch (error) {
       next(error);

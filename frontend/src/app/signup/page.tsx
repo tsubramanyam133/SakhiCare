@@ -19,6 +19,7 @@ export default function SignupPage() {
   const [step, setStep] = useState<'REGISTER' | 'OTP'>('REGISTER');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('Student');
   const [otp, setOtp] = useState('');
@@ -32,7 +33,7 @@ export default function SignupPage() {
     setIsLoading(true);
     
     try {
-      const response = await apiClient.post('/auth/register', { email, password });
+      const response = await apiClient.post('/auth/register', { email, password, phoneNumber });
       // If backend is active and sends OTP, go to OTP step
       setStep('OTP');
     } catch (err: any) {
@@ -129,6 +130,25 @@ export default function SignupPage() {
                     placeholder="sakhi@example.com" 
                     value={email} 
                     onChange={(e) => setEmail(e.target.value)} 
+                    required 
+                    suppressHydrationWarning
+                    className="pl-11 h-12 rounded-xl bg-white/60 border-slate-200 hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 transition-all duration-300 text-base w-full"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber" className="text-sm font-semibold text-slate-700 ml-1 block">Phone Number</Label>
+                <div className="relative group/input">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within/input:text-pink-500 transition-colors">
+                    <span className="text-lg">📱</span>
+                  </div>
+                  <Input 
+                    id="phoneNumber" 
+                    type="tel" 
+                    placeholder="9876543210" 
+                    value={phoneNumber} 
+                    onChange={(e) => setPhoneNumber(e.target.value)} 
                     required 
                     suppressHydrationWarning
                     className="pl-11 h-12 rounded-xl bg-white/60 border-slate-200 hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 transition-all duration-300 text-base w-full"

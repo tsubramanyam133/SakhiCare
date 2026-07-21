@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import { EmailService } from '../email.service';
 
 export class AuthService {
-  static async register(email: string, passwordHash: string) {
+  static async register(email: string, passwordHash: string, phoneNumber?: string) {
     let existingUser = await User.findOne({ email });
     if (existingUser && existingUser.isEmailVerified) {
       throw new AppError('Email is already in use', 400);
@@ -28,6 +28,7 @@ export class AuthService {
       existingUser.passwordHash = hashedPwd;
       existingUser.otp = otp;
       existingUser.otpExpiresAt = otpExpiresAt;
+      if (phoneNumber) existingUser.phoneNumber = phoneNumber;
       await existingUser.save();
       user = existingUser;
     } else {
@@ -35,6 +36,7 @@ export class AuthService {
         email,
         passwordHash: hashedPwd,
         role: Role.USER,
+        phoneNumber,
         otp,
         otpExpiresAt,
         isEmailVerified: false
