@@ -1,7 +1,13 @@
 import nodemailer from 'nodemailer';
 
+import dns from 'dns';
+// Force IPv4 to resolve the ENETUNREACH error on IPv6 (Render/cloud environments)
+dns.setDefaultResultOrder('ipv4first');
+
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER || 'sakhicare0203@gmail.com',
     pass: process.env.EMAIL_PASSWORD || '', 
