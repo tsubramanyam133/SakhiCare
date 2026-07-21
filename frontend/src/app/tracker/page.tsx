@@ -10,6 +10,7 @@ import { CalendarDays, Droplets, Smile, Activity, MessageCircleHeart, X, Lock } 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useDataStore } from '@/store/dataStore';
 import Link from 'next/link';
+import { apiClient } from '@/services/apiClient';
 
 // ── Generate a personalized suggestion based on a log entry ──
 function generateSuggestion(log: any, logIndex: number): string {
@@ -96,18 +97,11 @@ export default function TrackerPage() {
       if (userStr && tokenStr) {
         // We stored the raw token string in admin_token during signup
         const accessToken = tokenStr;
-        // Call backend API to save cycle and trigger prediction email
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/v1/tracker/cycles`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-          },
-          body: JSON.stringify({
-            startDate: date.toISOString(), // Send standard ISO string to backend
-            cycleLength: 28, // Default
-            periodLength: 5  // Default
-          })
+        // Call backend API to save cycle and trigger prediction email using apiClient
+        await apiClient.post('/tracker/cycles', {
+          startDate: date.toISOString(), // Send standard ISO string to backend
+          cycleLength: 28, // Default
+          periodLength: 5  // Default
         });
       }
     } catch (e) {

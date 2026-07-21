@@ -43,6 +43,7 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('sakhi_user');
+    localStorage.removeItem('sakhi_cycle_logs');
     setUser(null);
     router.push('/');
   };
