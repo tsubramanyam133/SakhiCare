@@ -63,7 +63,7 @@ export class AuthService {
       throw new AppError('Email already verified', 400);
     }
 
-    if (!user.otp || user.otp !== otp) {
+    if (!user.otp || user.otp !== String(otp).trim()) {
       throw new AppError('Invalid OTP', 400);
     }
 
