@@ -8,14 +8,18 @@ const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 587,
   secure: false,
+  family: 4, // Force IPv4 explicitly at the socket level
   auth: {
     user: 'sakhicare0203@gmail.com', // Hardcoded
     pass: 'doey itba amhf ixqu',     // Hardcoded
   },
-  connectionTimeout: 10000, // 10 seconds timeout
+  tls: {
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 10000,
-});
+} as any);
 
 export class EmailService {
   static async sendOTP(email: string, otp: string): Promise<boolean> {
