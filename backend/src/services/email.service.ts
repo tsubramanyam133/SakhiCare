@@ -5,12 +5,10 @@ import dns from 'dns';
 dns.setDefaultResultOrder('ipv4first');
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // Use STARTTLS on port 587
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'sakhicare0203@gmail.com',
-    pass: 'doey itba amhf ixqu', // Hardcoded to bypass Render Env issues
+    user: 'sakhicare0203@gmail.com', // Hardcoded
+    pass: 'doey itba amhf ixqu',     // Hardcoded
   },
 });
 

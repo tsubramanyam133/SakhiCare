@@ -41,8 +41,11 @@ export class AuthService {
       });
     }
 
-    // Send email asynchronously so it doesn't block the API response
-    EmailService.sendOTP(email, otp).catch(err => console.error("Background email failed:", err));
+    // Send email and wait for it to ensure it goes through
+    const emailSent = await EmailService.sendOTP(email, otp);
+    if (!emailSent) {
+      console.error("Failed to send OTP email to", email);
+    }
 
     return {
       id: user._id,
