@@ -15,6 +15,9 @@ export class AuthService {
     }
     
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log(`\n==========================================`);
+    console.log(`[DEV ONLY] GENERATED OTP FOR ${email}: ${otp}`);
+    console.log(`==========================================\n`);
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
     const hashedPwd = await bcrypt.hash(passwordHash, 10);
