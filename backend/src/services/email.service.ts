@@ -1,34 +1,9 @@
-import nodemailer from 'nodemailer';
-
-import dns from 'dns';
-// Force IPv4 to resolve the ENETUNREACH error on IPv6 (Render/cloud environments)
-dns.setDefaultResultOrder('ipv4first');
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  family: 4, // Force IPv4 explicitly at the socket level
-  auth: {
-    user: 'sakhicare0203@gmail.com', // Hardcoded
-    pass: 'doey itba amhf ixqu',     // Hardcoded
-  },
-  tls: {
-    rejectUnauthorized: false
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-} as any);
+import axios from 'axios';
 
 export class EmailService {
   static async sendOTP(email: string, otp: string): Promise<boolean> {
     try {
-      const mailOptions = {
-        from: `"SAKHI AI" <${process.env.EMAIL_USER || 'sakhicare0203@gmail.com'}>`,
-        to: email,
-        subject: 'Verify your SAKHI AI Account',
-        html: `
+      const html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #ec4899;">Welcome to SAKHI AI!</h2>
             <p>Please use the following One Time Password (OTP) to verify your account.</p>
@@ -38,14 +13,25 @@ export class EmailService {
             <p>This OTP will expire in 10 minutes.</p>
             <p>If you did not request this, please ignore this email.</p>
           </div>
-        `,
+        `;
+      
+      const payload = {
+        to: email,
+        subject: 'Verify your SAKHI AI Account',
+        html
       };
 
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Message sent: %s', info.messageId);
-      return true;
-    } catch (error) {
-      console.error('Error sending email:', error);
+      // In production, we call the Vercel frontend which will send the email.
+      // This completely bypasses Render's strict outbound SMTP blocks!
+      const url = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:3000/api/send-email'
+        : 'https://sakhi-care-new.vercel.app/api/send-email';
+
+      console.log('Sending email via Vercel proxy to:', email);
+      const response = await axios.post(url, payload, { timeout: 15000 });
+      return response.data.success;
+    } catch (error: any) {
+      console.error('Error sending email via proxy:', error.response?.data || error.message);
       return false;
     }
   }
@@ -55,11 +41,7 @@ export class EmailService {
       const nextPeriod = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(nextPeriodDate);
       const ovulation = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(ovulationDate);
 
-      const mailOptions = {
-        from: `"SAKHI AI" <${process.env.EMAIL_USER || 'sakhicare0203@gmail.com'}>`,
-        to: email,
-        subject: 'Your SAKHI AI Cycle Prediction is Ready 🌸',
-        html: `
+      const html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #ec4899; text-align: center;">SAKHI AI Insights</h2>
             <p style="font-size: 16px; color: #333;">Hello!</p>
@@ -84,14 +66,22 @@ export class EmailService {
               *Predictions are estimates based on your logged data. Always consult a healthcare professional for medical advice.*
             </p>
           </div>
-        `,
+        `;
+      
+      const payload = {
+        to: email,
+        subject: 'Your SAKHI AI Cycle Prediction is Ready 🌸',
+        html
       };
 
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Prediction email sent: %s', info.messageId);
-      return true;
-    } catch (error) {
-      console.error('Error sending prediction email:', error);
+      const url = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:3000/api/send-email'
+        : 'https://sakhi-care-new.vercel.app/api/send-email';
+
+      const response = await axios.post(url, payload, { timeout: 15000 });
+      return response.data.success;
+    } catch (error: any) {
+      console.error('Error sending prediction email via proxy:', error.response?.data || error.message);
       return false;
     }
   }
