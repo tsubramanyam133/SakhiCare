@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const uri = "mongodb+srv://tsubramanyam133_db_user:zmYt4aJkIzbAnsc9@cluster1.l0qwzqz.mongodb.net/sakhi_ai?appName=Cluster1";
+const uri = process.env.MONGO_URI;
+
+if (!uri) {
+  console.error("MONGO_URI is not defined in environment");
+  process.exit(1);
+}
 
 async function run() {
   await mongoose.connect(uri);

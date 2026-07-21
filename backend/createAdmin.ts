@@ -14,8 +14,12 @@ async function createAdmin() {
     await mongoose.connect(mongoUri);
     console.log('Connected to MongoDB');
 
-    const email = 'tsubramanyam133@gmail.com';
-    const password = 'Subbu@1234';
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be defined in environment');
+    }
     const passwordHash = await bcrypt.hash(password, 10);
 
     const existingUser = await User.findOne({ email });

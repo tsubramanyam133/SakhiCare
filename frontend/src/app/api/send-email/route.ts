@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { to, subject, html } = body;
-    
+
     if (!to || !subject || !html) {
       return NextResponse.json({ success: false, error: 'Missing fields' }, { status: 400 });
     }
@@ -13,13 +13,13 @@ export async function POST(req: Request) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'sakhicare0203@gmail.com', // Hardcoded
-        pass: 'doey itba amhf ixqu'      // Hardcoded
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
       }
     });
 
     const info = await transporter.sendMail({
-      from: '"SAKHI AI" <sakhicare0203@gmail.com>',
+      from: '"SAKHI Care" <sakhicare0203@gmail.com>',
       to,
       subject,
       html

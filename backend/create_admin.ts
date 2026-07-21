@@ -16,8 +16,13 @@ async function createAdmin() {
     await mongoose.connect(mongoUri);
     console.log('Connected to MongoDB');
 
-    const email = 'sakhicare0203@gmail.com';
-    const password = 'Sakhi@2006';
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      console.error('ADMIN_EMAIL and ADMIN_PASSWORD must be defined in environment');
+      process.exit(1);
+    }
     
     // Check if user already exists
     let user = await User.findOne({ email });
