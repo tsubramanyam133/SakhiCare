@@ -20,22 +20,25 @@ export const Navbar = () => {
     const savedUser = localStorage.getItem('sakhi_user');
     if (savedUser && !user) setUser(JSON.parse(savedUser));
 
-    // Check for active period (logged within last 5 days with active flow)
-    try {
-      const logsStr = localStorage.getItem('sakhi_cycle_logs');
-      if (logsStr) {
-        const logs = JSON.parse(logsStr);
-        if (Array.isArray(logs) && logs.length > 0) {
-          const activeLog = logs.find((l: any) => l.flow && l.flow !== 'None');
-          if (activeLog && activeLog.date) {
-            const latestLogDate = new Date(activeLog.date);
-            const today = new Date();
-            if (!isNaN(latestLogDate.getTime())) {
-              const diffTime = today.getTime() - latestLogDate.getTime();
-              const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    const checkActivePeriod = () => {
+      try {
+        const logsStr = localStorage.getItem('sakhi_cycle_logs');
+        if (logsStr) {
+          const logs = JSON.parse(logsStr);
+          if (Array.isArray(logs) && logs.length > 0) {
+            const activeLog = logs.find((l: any) => l.flow && l.flow !== 'None');
+            if (activeLog && activeLog.date) {
+              const latestLogDate = new Date(activeLog.date);
+              const today = new Date();
+              if (!isNaN(latestLogDate.getTime())) {
+                const diffTime = today.getTime() - latestLogDate.getTime();
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-              if (diffDays >= 1 && diffDays <= 5) {
-                setActivePeriodMsg(`Active Period Alert: You are on day ${diffDays} of your cycle. Remember to maintain hygiene, stay hydrated, and rest!`);
+                if (diffDays >= 1 && diffDays <= 5) {
+                  setActivePeriodMsg(`Active Period Alert: You are on day ${diffDays} of your cycle. Remember to maintain hygiene, stay hydrated, and rest!`);
+                } else {
+                  setActivePeriodMsg(null);
+                }
               } else {
                 setActivePeriodMsg(null);
               }
@@ -48,12 +51,14 @@ export const Navbar = () => {
         } else {
           setActivePeriodMsg(null);
         }
-      } else {
+      } catch (e) {
         setActivePeriodMsg(null);
       }
-    } catch (e) {
-      setActivePeriodMsg(null);
-    }
+    };
+
+    checkActivePeriod();
+    window.addEventListener('sakhi_log_updated', checkActivePeriod);
+    return () => window.removeEventListener('sakhi_log_updated', checkActivePeriod);
   }, [setUser, user]);
 
   const handleLogout = () => {

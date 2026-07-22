@@ -113,6 +113,11 @@ export default function TrackerPage() {
       const updated = [newLog, ...filtered];
       localStorage.setItem('sakhi_cycle_logs', JSON.stringify(updated));
 
+      // Dispatch event to notify Navbar immediately
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('sakhi_log_updated'));
+      }
+
       // Generate suggestion for the newest log
       const suggestion = generateSuggestion(newLog, 0);
       setActiveSuggestion(suggestion);
@@ -120,14 +125,19 @@ export default function TrackerPage() {
       return updated;
     });
 
+    const isPeriodFlow = flow && flow !== 'None';
+    const notificationMsg = isPeriodFlow 
+      ? `🩸 Active Period Day logged! (${flow} flow). Remember to maintain hygiene, stay hydrated, and rest.`
+      : `📋 Log entry saved for ${dateString}. Keep tracking regularly with SAKHI!`;
+
+    addNotification({
+      message: notificationMsg,
+      type: isPeriodFlow ? 'alert' : 'info'
+    });
+
     setFlow('None');
     setMood('');
     setSymptoms([]);
-
-    addNotification({
-      message: `Cycle log saved! Based on your ${flow} flow and symptoms, check your SAKHI suggestions for personalised health tips.`,
-      type: 'info'
-    });
   };
 
   const handleOpenSuggestion = (log: any, idx: number) => {
