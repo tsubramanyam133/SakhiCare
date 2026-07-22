@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import { EmailService } from '../email.service';
 
 export class AuthService {
-  static async register(email: string, passwordHash: string, phoneNumber?: string) {
+  static async register(email: string, passwordHash: string, phoneNumber?: string, name?: string) {
     let existingUser = await User.findOne({ email });
     if (existingUser && existingUser.isEmailVerified) {
       throw new AppError('Email is already in use', 400);
@@ -29,10 +29,12 @@ export class AuthService {
       existingUser.otp = otp;
       existingUser.otpExpiresAt = otpExpiresAt;
       if (phoneNumber) existingUser.phoneNumber = phoneNumber;
+      if (name) existingUser.name = name;
       await existingUser.save();
       user = existingUser;
     } else {
       user = await User.create({
+        name,
         email,
         passwordHash: hashedPwd,
         role: Role.USER,
@@ -76,13 +78,20 @@ export class AuthService {
       throw new AppError('OTP expired', 400);
     }
 
+    if (!user.name || user.name === 'User') {
+      if (user.email) {
+        const rawPrefix = user.email.split('@')[0];
+        user.name = rawPrefix.replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'User';
+      }
+    }
+
     user.isEmailVerified = true;
     user.otp = undefined;
     user.otpExpiresAt = undefined;
     await user.save();
 
     // After verifying, we can automatically log them in
-    const payload = { userId: user._id, role: user.role };
+    const payload = { userId: user._id, role: user.role, name: user.name || 'User', email: user.email };
     const accessToken = jwt.sign(payload, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as any });
     const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET, { expiresIn: env.JWT_REFRESH_EXPIRES_IN as any });
 
@@ -92,8 +101,14 @@ export class AuthService {
     return { accessToken, refreshToken, user: payload };
   }
 
-  static async login(email: string, passwordHash: string) {
-    const user = await User.findOne({ email });
+  static async login(identifier: string, passwordHash: string) {
+    const user = await User.findOne({
+      $or: [
+        { email: identifier.toLowerCase().trim() },
+        { phoneNumber: identifier.trim() },
+        { name: identifier.trim() }
+      ]
+    });
     if (!user) {
       throw new AppError('Invalid credentials', 401);
     }
@@ -107,7 +122,16 @@ export class AuthService {
       throw new AppError('Account is not active', 403);
     }
 
-    const payload = { userId: user._id, role: user.role };
+    // Auto-populate name for previously registered users missing a name
+    if (!user.name || user.name === 'User') {
+      if (user.email) {
+        const rawPrefix = user.email.split('@')[0];
+        user.name = rawPrefix.replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'User';
+        await user.save().catch(() => {});
+      }
+    }
+
+    const payload = { userId: user._id, role: user.role, name: user.name || 'User', email: user.email };
     
     const accessToken = jwt.sign(payload, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as any });
     const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET, { expiresIn: env.JWT_REFRESH_EXPIRES_IN as any });

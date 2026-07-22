@@ -160,7 +160,7 @@ export function FloatingChatbot() {
                   "rounded-2xl px-3 py-2 sm:p-3 max-w-[80%] shadow-sm text-sm border",
                   msg.role === 'user' ? "bg-slate-800 text-white rounded-tr-sm border-transparent" : "bg-pink-100 text-pink-950 border-pink-200 rounded-tl-sm"
                 )}>
-                  {msg.content}
+                  {msg.content.replace(/\*\*/g, '').replace(/\*/g, '')}
                 </div>
               </div>
             ))}

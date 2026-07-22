@@ -16,12 +16,19 @@ export class AIService {
 
       const prompt = `You are SAKHI AI, a helpful, empathetic, and knowledgeable assistant for a Women & Child Welfare Platform. 
       You provide guidance on menstrual tracking, maternal care, government schemes, and general women's health. 
-      Keep answers concise and easy to understand.
+      Keep answers concise, friendly, and easy to understand.
+      CRITICAL INSTRUCTIONS:
+      - Do NOT use markdown formatting or asterisks (* or **) under any circumstances.
+      - Write plain, clean text without any asterisks.
+      - For lists, use simple numbers (1., 2.) or hyphens (-).
       User message: ${message}`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      const text = response.text();
+      let text = response.text();
+
+      // Strip any remaining asterisks
+      text = text.replace(/\*\*/g, '').replace(/\*/g, '');
 
       return {
         role: 'assistant',

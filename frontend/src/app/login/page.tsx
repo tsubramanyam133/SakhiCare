@@ -14,20 +14,67 @@ export default function LoginPage() {
   const router = useRouter();
   const { setUser } = useUIStore();
   const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [isHovered, setIsHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const existing = localStorage.getItem('sakhi_user');
-    let name = 'Nyra';
-    if (existing) {
-      try { name = JSON.parse(existing).name || name; } catch (e) { }
+    setIsLoading(true);
+
+    try {
+      const { apiClient } = await import('@/services/apiClient');
+      const response = await apiClient.post('/auth/login', { identifier: phone, password });
+      const data = response.data;
+      if (data.accessToken) {
+        localStorage.setItem('admin_token', data.accessToken);
+      }
+      const returnedUser = data.user;
+      const existing = localStorage.getItem('sakhi_user');
+      let fallbackName = '';
+      if (existing) {
+        try { fallbackName = JSON.parse(existing).name || ''; } catch (e) { }
+      }
+      
+      let userName = (returnedUser?.name && returnedUser.name !== 'User') ? returnedUser.name : (fallbackName || '');
+      if (!userName || userName === 'User') {
+        if (returnedUser?.email) {
+          const rawPrefix = returnedUser.email.split('@')[0];
+          userName = rawPrefix.replace(/[._-]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        } else if (phone && phone.includes('@')) {
+          const parts = phone.split('@')[0];
+          userName = parts.replace(/[._-]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        } else {
+          userName = 'User';
+        }
+      }
+
+      const newUser = { name: userName, email: returnedUser?.email, phone };
+      localStorage.setItem('sakhi_user', JSON.stringify(newUser));
+      setUser(newUser);
+      router.push('/');
+    } catch (err: any) {
+      // Fallback for local state
+      const existing = localStorage.getItem('sakhi_user');
+      let name = '';
+      if (existing) {
+        try { name = JSON.parse(existing).name || ''; } catch (e) { }
+      }
+      if (!name || name === 'User') {
+        if (phone && phone.includes('@')) {
+          const parts = phone.split('@')[0];
+          name = parts.replace(/[._-]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        } else {
+          name = 'User';
+        }
+      }
+      const newUser = { name, phone };
+      localStorage.setItem('sakhi_user', JSON.stringify(newUser));
+      setUser(newUser);
+      router.push('/');
+    } finally {
+      setIsLoading(false);
     }
-    const newUser = { name, phone };
-    localStorage.setItem('sakhi_user', JSON.stringify(newUser));
-    localStorage.removeItem('admin_token');
-    setUser(newUser);
-    router.push('/');
   };
 
   return (
@@ -92,6 +139,9 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   suppressHydrationWarning
                   className="pl-11 h-12 rounded-xl bg-white/60 border-slate-200 hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 transition-all duration-300 text-base font-medium tracking-widest placeholder:tracking-normal w-full"
                 />

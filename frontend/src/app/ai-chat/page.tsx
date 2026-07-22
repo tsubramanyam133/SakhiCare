@@ -184,6 +184,7 @@ export default function AIChatPage() {
       const { apiClient } = await import('@/services/apiClient');
       const res = await apiClient.post('/ai/chat', { message: input });
       let aiContent = res.data?.data?.content || res.data?.message || "I'm sorry, I couldn't process that.";
+      aiContent = aiContent.replace(/\*\*/g, '').replace(/\*/g, '');
 
       setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: aiContent }]);
     } catch (e) {
@@ -224,7 +225,7 @@ export default function AIChatPage() {
                 "px-3 py-2 sm:px-4 sm:py-3 rounded-2xl max-w-[85%] sm:max-w-[75%] shadow-sm border",
                 msg.role === 'user' ? "bg-gradient-to-tr from-pink-500 to-rose-400 text-white rounded-br-none border-transparent" : "bg-pink-100 border-pink-200 rounded-bl-none text-pink-950"
               )}>
-                <p className="text-xs sm:text-sm leading-relaxed">{msg.content}</p>
+                <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{msg.content.replace(/\*\*/g, '').replace(/\*/g, '')}</p>
                 {msg.role === 'assistant' && (
                   <button onClick={() => speakText(msg.content)} className="mt-2.5 text-slate-400 hover:text-pink-500 transition-colors bg-pink-50 hover:bg-pink-100 p-1.5 rounded-full" title="Listen">
                     <Volume2 className="h-4 w-4 sm:h-5 sm:w-5" />

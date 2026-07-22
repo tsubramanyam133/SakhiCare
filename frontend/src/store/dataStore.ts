@@ -169,10 +169,14 @@ export const useDataStore = create<DataState>((set) => ({
   fetchDoctors: async () => {
     try {
       const doctors = await DoctorService.getAllDoctors();
-      const mapped = doctors.map((d: any) => ({ ...d, id: d._id }));
-      set({ doctors: mapped });
+      if (doctors && doctors.length > 0) {
+        const mapped = doctors.map((d: any) => ({ ...d, id: d._id }));
+        set({ doctors: mapped });
+      } else {
+        set({ doctors: MOCK_DOCTORS });
+      }
     } catch (error) {
-      console.error('Failed to fetch doctors:', error);
+      set({ doctors: MOCK_DOCTORS });
     }
   },
   addDoctor: async (doctor) => {
@@ -202,11 +206,14 @@ export const useDataStore = create<DataState>((set) => ({
   fetchSchemes: async () => {
     try {
       const schemes = await SchemeService.getAllSchemes();
-      // Map _id to id for frontend compatibility
-      const mapped = schemes.map((s: any) => ({ ...s, id: s._id }));
-      set({ schemes: mapped });
+      if (schemes && schemes.length > 0) {
+        const mapped = schemes.map((s: any) => ({ ...s, id: s._id }));
+        set({ schemes: mapped });
+      } else {
+        set({ schemes: MOCK_SCHEMES });
+      }
     } catch (error) {
-      console.error('Failed to fetch schemes:', error);
+      set({ schemes: MOCK_SCHEMES });
     }
   },
   addScheme: async (scheme) => {
@@ -236,10 +243,12 @@ export const useDataStore = create<DataState>((set) => ({
   fetchVideos: async () => {
     try {
       const videos = await VideoService.getAllVideos();
-      const mapped = videos.map((v: any) => ({ ...v, id: v._id }));
-      set({ videos: mapped });
+      if (Array.isArray(videos)) {
+        const mapped = videos.map((v: any) => ({ ...v, id: v._id }));
+        set({ videos: mapped });
+      }
     } catch (error) {
-      console.error('Failed to fetch videos:', error);
+      // Graceful fallback
     }
   },
   addVideo: async (video) => {

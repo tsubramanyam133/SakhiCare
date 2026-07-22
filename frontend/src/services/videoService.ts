@@ -11,8 +11,12 @@ export interface VideoDTO {
 
 export const VideoService = {
   getAllVideos: async () => {
-    const response = await apiClient.get('/videos');
-    return response.data;
+    try {
+      const response = await apiClient.get('/videos');
+      return response.data?.data?.videos || response.data || [];
+    } catch (e) {
+      return [];
+    }
   },
 
   createVideo: async (video: VideoDTO) => {

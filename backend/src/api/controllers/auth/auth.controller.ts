@@ -5,8 +5,8 @@ import { AuthRequest } from '../../middlewares/authGuard';
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, phoneNumber } = req.body;
-      const user = await AuthService.register(email, password, phoneNumber);
+      const { email, password, phoneNumber, name } = req.body;
+      const user = await AuthService.register(email, password, phoneNumber, name);
       res.status(201).json({ success: true, data: user });
     } catch (error) {
       next(error);
@@ -33,8 +33,9 @@ export class AuthController {
 
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body;
-      const { accessToken, refreshToken, user } = await AuthService.login(email, password);
+      const { email, phone, phoneNumber, identifier, password } = req.body;
+      const loginId = identifier || email || phone || phoneNumber;
+      const { accessToken, refreshToken, user } = await AuthService.login(loginId, password);
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,

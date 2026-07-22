@@ -33,7 +33,7 @@ export default function SignupPage() {
     setIsLoading(true);
     
     try {
-      const response = await apiClient.post('/auth/register', { email, password, phoneNumber });
+      const response = await apiClient.post('/auth/register', { email, password, phoneNumber, name });
       // If backend is active and sends OTP, go to OTP step
       setStep('OTP');
     } catch (err: any) {
@@ -57,7 +57,9 @@ export default function SignupPage() {
       }
 
       // Save user to state & UI
-      const newUser = { name: name || 'User', email, role };
+      const returnedUser = data.user;
+      const userName = returnedUser?.name || name || 'User';
+      const newUser = { name: userName, email: returnedUser?.email || email, role };
       localStorage.setItem('sakhi_user', JSON.stringify(newUser));
       setUser(newUser);
       

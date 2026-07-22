@@ -62,7 +62,7 @@ export default function CommunityPage() {
 
     const post = {
       id: Date.now(),
-      author: user?.name ? `${user.name} (You)` : "Nyra (You)",
+      author: user?.name ? `${user.name} (You)` : "User (You)",
       role: "Community Member",
       time: "Just now",
       content: newPost,
@@ -108,7 +108,7 @@ export default function CommunityPage() {
         return {
           ...p,
           comments: p.comments + 1,
-          commentsList: [...(p.commentsList || []), { author: user?.name || "Nyra", content: commentText, time: "Just now" }]
+          commentsList: [...(p.commentsList || []), { author: user?.name || "User", content: commentText, time: "Just now" }]
         };
       }
       return p;

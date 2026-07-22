@@ -1,9 +1,15 @@
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://sakhicare-lsl9.onrender.com/api/v1';
+const getBaseURL = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:5000/api/v1';
+  }
+  return 'https://sakhicare-lsl9.onrender.com/api/v1';
+};
 
 export const apiClient = axios.create({
-  baseURL,
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -32,7 +38,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
       try {
         // Attempt to refresh token using the http-only cookie
-        const res = await axios.post(`${baseURL}/auth/refresh-token`, {}, { withCredentials: true });
+        const res = await axios.post(`${getBaseURL()}/auth/refresh-token`, {}, { withCredentials: true });
         
         // You would typically update your auth store with the new access token here
         // useAuthStore.getState().setAccessToken(res.data.accessToken);

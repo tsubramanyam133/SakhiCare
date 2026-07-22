@@ -15,9 +15,8 @@ export const SchemeService = {
   async getAllSchemes() {
     try {
       const response = await apiClient.get('/schemes');
-      return response.data.data.schemes;
+      return response.data?.data?.schemes || [];
     } catch (e) {
-      console.error("Failed to fetch schemes:", e);
       return [];
     }
   },
